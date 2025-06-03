@@ -1,30 +1,29 @@
-from app.routers.auth import get_current_user
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List
 
+from app import schemas
+from app.models_db import Job
+from app.database import get_db
+from app.routers.auth import get_current_user
+
 router = APIRouter(prefix="/job", tags=["Job Listing"])
 
-#Geçiçi veri deposu (veritabanı yerine kullanılacak)
-job_db = []
+@router.post("/add", response_model=dict)
+def add_job(job: schemas.JobCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    job_entry = Job(
+        title=job.title,
+        description=job.description,
+        required_skills=";".join(job.required_skills),
+        owner_id=current_user.id
+    )
+    db.add(job_entry)
+    db.commit()
+    db.refresh(job_entry)
+    return {"message": "Job posted successfully", "job_id": job_entry.id}
 
-class JobPost(BaseModel):
-    title: str
-    description: str
-    required_skills: List[str]
-
-@router.post("/add")
-def add_job(job: JobPost, username: str = Depends(get_current_user)):
-    job_entry = {
-        "id": len(job_db + 1),
-        "owner": username,
-        "title": job.title,
-        "description" : job.description,
-        "required_skills": job.required_skills
-    }
-    job_db.append(job_entry)
-    return {"message": "Job posted successfully", "job_id": job_entry["id"]}
-
-@router.get("/all")
-def get_all_jobs():
-    return job_db
+@router.get("/all", response_model=List[schemas.JobOut])
+def get_all_jobs(db: Session = Depends(get_db)):
+    jobs = db.query(Job).all()
+    return jobs
