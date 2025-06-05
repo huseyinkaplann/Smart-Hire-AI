@@ -7,6 +7,8 @@ function Dashboard() {
       <a href="/cv-match">CV Eşleştirme</a>
       <hr></hr>
       <a href="/add-job">İlan Ekle</a>
+      <hr></hr>
+      <a href="/report">Raporlar</a>
     </div>
   );
 }

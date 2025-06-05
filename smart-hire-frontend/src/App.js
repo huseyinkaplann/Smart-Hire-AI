@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import AddJobPage from "./pages/AddJobPage";
+import ReportPage from "./pages/ReportPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/cv-upload" element={<CvUploadPage />} />
           <Route path="/cv-match" element={<CvMatchPage />} />
           <Route path="/add-job" element={<AddJobPage />} />
+          <Route path="/report" element={<ReportPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

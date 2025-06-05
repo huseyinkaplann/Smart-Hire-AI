@@ -10,17 +10,34 @@ function AddJobPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = localStorage.getItem("token"); // 🔐 Token doğrudan alınıyor
+
+    if (!token) {
+      setMessage("Oturum bulunamadı. Lütfen giriş yapın.");
+      return;
+    }
+
     try {
-      const res = await api.post("/job/add", {
-        title,
-        description,
-        required_skills: skills.split(",").map((s) => s.trim()),
-      });
-      setMessage("İlan başarıyla eklendi! ID: " + res.data.job_id);
+      const res = await api.post(
+        "/job/add",
+        {
+          title,
+          description,
+          required_skills: skills.split(",").map((s) => s.trim()),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Header'a token açıkça eklendi
+          },
+        }
+      );
+
+      setMessage(`İlan eklendi! ID: ${res.data.job_id}`);
       setTitle("");
       setDescription("");
       setSkills("");
     } catch (err) {
+      console.error("❌ Hata:", err.response?.data || err.message);
       setMessage("İlan eklenirken hata oluştu.");
     }
   };

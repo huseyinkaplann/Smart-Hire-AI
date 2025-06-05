@@ -6,7 +6,7 @@ from typing import List
 from app import schemas
 from app.models_db import Job
 from app.database import get_db
-from app.routers.auth import get_current_user
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/job", tags=["Job Listing"])
 
