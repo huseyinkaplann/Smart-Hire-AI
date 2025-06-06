@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import List, Optional
 
 class UserCreate(BaseModel):
@@ -13,7 +13,15 @@ class JobCreate(BaseModel):
 class JobOut(BaseModel):
     id: int
     title: str
+    description: Optional[str] = None
+    required_skills: List[str] = []
     similarity_score: Optional[float] = None
+
+    @validator("required_skills", pre=True)
+    def parse_skills(cls, v):
+        if isinstance(v, str):
+            return [s.strip() for s in v.split(";") if s.strip()]
+        return v
 
     class Config:
         from_attributes = True

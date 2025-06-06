@@ -4,6 +4,7 @@ from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
+
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password = Column(String)
@@ -12,6 +13,7 @@ class User(Base):
 
 class Job(Base):
     __tablename__ = "jobs"
+    
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     description = Column(Text)

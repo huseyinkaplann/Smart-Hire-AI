@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Depends
+from sqlalchemy.orm import Session
+
 from app.utils.pdf_parser import extract_text_from_pdf
 from app.services.ai_analysis import analyze_cv_text
 from app.services.matching import match_cv_to_jobs
-
-from sqlalchemy.orm import Session
 from app.models_db import Job
 from app.database import get_db
 from app.utils.logger import log_event

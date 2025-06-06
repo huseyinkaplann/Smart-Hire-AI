@@ -28,6 +28,10 @@ def get_db():
     finally:
         db.close()
 
+# Kullanıcıyı DB'den getir
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()
+
 #Parola Doğrulama
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
@@ -47,10 +51,6 @@ def create_access_token(data: dict, expires_delta: timedelta):
     expire = datetime.utcnow() + expires_delta
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-# Kullanıcıyı DB'den getir
-def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
 
 @router.post("/register")
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
