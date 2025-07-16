@@ -1,9 +1,19 @@
+#Schemas.py
 from pydantic import BaseModel, validator
 from typing import List, Optional
 
 class UserCreate(BaseModel):
     username: str
     password: str
+    role: Optional[str] = "Basvuran"
+
+class UserOut(BaseModel):
+    id: int
+    username: str
+    role: str
+
+    class Config:
+        from_attributes = True
 
 class JobCreate(BaseModel):
     title: str

@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { jwtDecode } from 'jwt-decode';
 
 // Sayfa bileşenlerini import edelim
 import Layout from './components/Layout';
@@ -27,9 +28,19 @@ const theme = createTheme({
 });
 
 // PrivateRoute bileşeni, oturum açmış kullanıcıların belirli rotalara erişimini kontrol edecek
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem('token');
-  return token ? children : <Navigate to="/login" />;
+  if (!token) return <Navigate to="/login" />;
+  try {
+    const decoded = jwtDecode(token);
+    if (!allowedRoles || allowedRoles.includes(decoded.role)) {
+      return children;
+    } else {
+      return <Navigate to="/login" />; // Yetkisiz
+    }
+  } catch (error) {
+    return <Navigate to="/login" />;
+  }
 };
 
 function App() {
@@ -45,7 +56,7 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK"]}>
                 <Layout><DashboardPage /></Layout>
               </PrivateRoute>
             }
@@ -53,7 +64,7 @@ function App() {
           <Route
             path="/job-add"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK"]}>
                 <Layout><JobAddPage /></Layout>
               </PrivateRoute>
             }
@@ -61,7 +72,7 @@ function App() {
           <Route
             path="/cv-upload"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK", "Basvuran"]}>
                 <Layout><CvUploadPage /></Layout>
               </PrivateRoute>
             }
@@ -69,7 +80,7 @@ function App() {
           <Route
             path="/cv-match"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK"]}>
                 <Layout><CvMatchPage /></Layout>
               </PrivateRoute>
             }
@@ -77,7 +88,7 @@ function App() {
           <Route
             path="/all-jobs"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK", "Basvuran"]}>
                 <Layout><AllJobsPage /></Layout>
               </PrivateRoute>
             }
@@ -85,7 +96,7 @@ function App() {
           <Route
             path="/reports"
             element={
-              <PrivateRoute>
+              <PrivateRoute allowedRoles={["IK"]}>
                 <Layout><ReportsPage /></Layout>
               </PrivateRoute>
             }

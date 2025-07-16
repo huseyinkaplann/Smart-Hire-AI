@@ -16,7 +16,7 @@ function LoginPage() {
     try {
       const response = await AuthService.login(username, password);
       localStorage.setItem('token', response.data.access_token);
-      navigate('/dashboard'); // Giriş başarılı olursa dashboard'a yönlendir
+      navigate('/all-jobs'); // Giriş başarılı olursa dashboard'a yönlendir
     } catch (err) {
       setError(err.response?.data?.detail || 'Giriş yaparken bir hata oluştu.');
     }

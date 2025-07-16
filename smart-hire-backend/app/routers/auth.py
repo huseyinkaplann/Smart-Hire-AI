@@ -1,3 +1,4 @@
+#auth.py
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -57,7 +58,11 @@ def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if get_user_by_username(db, user.username):
         raise HTTPException(status_code=400, detail="Username already exists")
     hashed_pw = hash_password(user.password)
-    new_user = User(username=user.username, password=hashed_pw)
+    new_user = User(
+        username=user.username,
+        password=hashed_pw,
+        role=user.role
+    )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -69,7 +74,10 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={
+            "sub": user.username,
+            "role": user.role
+            },
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": access_token, "token_type": "bearer"}

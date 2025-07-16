@@ -109,6 +109,13 @@ function CvUploadPage() {
               </Typography>
 
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mt: 2 }}>
+                Yükleyen:
+              </Typography>
+              <Typography variant="body2" sx={{ maxHeight: 200, overflowY: 'auto', p: 1, border: '1px dashed #eee' }}>
+                {cvData.uploaded_by || 'Metin bulunamadı.'}
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mt: 2 }}>
                 Analiz Sonuçları:
               </Typography>
               {cvData.analysis ? (
